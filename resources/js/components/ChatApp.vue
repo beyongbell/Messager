@@ -1,7 +1,7 @@
 <template>
     <div class="chat-app">
-        <Conversation :contact="selectedContect" :message="messages"/>
-        <ContactsList :contacts="contacts"/>
+        <Conversation :contact="selectedContect" :messages="messages"/>
+        <ContactsList :contacts="contacts" @selected="startConversationWith"/>
     </div>
 </template>
 
@@ -30,6 +30,16 @@
             .then((response) => {
                 this.contacts = response.data;
             })
+        },
+        methods: {
+            startConversationWith(contact) {
+                this.updateUnreadCount(contact, true);
+                axios.get(`/conversation/${contact.id}`)
+                    .then((response) => {
+                        this.messages = response.data;
+                        this.selectedContact = contact;
+                    })
+            },
         }
     }
 </script>

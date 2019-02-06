@@ -1799,6 +1799,17 @@ __webpack_require__.r(__webpack_exports__);
     axios.get('/contacts').then(function (response) {
       _this.contacts = response.data;
     });
+  },
+  methods: {
+    startConversationWith: function startConversationWith(contact) {
+      var _this2 = this;
+
+      this.updateUnreadCount(contact, true);
+      axios.get("/conversation/".concat(contact.id)).then(function (response) {
+        _this2.messages = response.data;
+        _this2.selectedContact = contact;
+      });
+    }
   }
 });
 
@@ -1826,6 +1837,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    MessageFeed: _MessageFeed__WEBPACK_IMPORTED_MODULE_0__["default"],
+    MessageComposer: _MessageComposer__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
   props: {
     contact: {
       type: Object,
@@ -1876,6 +1891,17 @@ __webpack_require__.r(__webpack_exports__);
       type: Array,
       default: []
     }
+  },
+  data: function data() {
+    return {
+      selected: 0
+    };
+  },
+  methods: {
+    selectContact: function selectContact(contact) {
+      this.selected = contact;
+      this.$emit('selected', contact);
+    }
   }
 });
 
@@ -1894,7 +1920,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      message: null
+    };
+  },
+  methods: {
+    send: function send() {
+      if (this.message = '') {
+        return;
+      }
+
+      this.$emit('send', this.message);
+      this.message = '';
+    }
+  }
+});
 
 /***/ }),
 
@@ -1911,7 +1955,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    contact: {
+      type: Object
+    },
+    messages: {
+      type: Array,
+      required: true
+    }
+  }
+});
 
 /***/ }),
 
@@ -36776,10 +36838,13 @@ var render = function() {
     { staticClass: "chat-app" },
     [
       _c("Conversation", {
-        attrs: { contact: _vm.selectedContect, message: _vm.messages }
+        attrs: { contact: _vm.selectedContect, messages: _vm.messages }
       }),
       _vm._v(" "),
-      _c("ContactsList", { attrs: { contacts: _vm.contacts } })
+      _c("ContactsList", {
+        attrs: { contacts: _vm.contacts },
+        on: { selected: _vm.startConversationWith }
+      })
     ],
     1
   )
@@ -36815,7 +36880,7 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("MessageFeed", {
-        attrs: { contact: _vm.contact, message: _vm.messages }
+        attrs: { contact: _vm.contact, messages: _vm.messages }
       }),
       _vm._v(" "),
       _c("MessageComposer", { on: { send: _vm.sendMessage } })
@@ -36848,20 +36913,32 @@ var render = function() {
   return _c("div", { staticClass: "list" }, [
     _c(
       "ul",
-      _vm._l(_vm.contacts, function(contact) {
-        return _c("li", { key: contact.id }, [
-          _c("div", { staticClass: "avatar" }, [
-            _c("img", { attrs: { src: contact.image } })
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "contact" }, [
-            _c("p", { staticClass: "name" }, [
-              _vm._v(" " + _vm._s(contact.name))
+      _vm._l(_vm.contacts, function(contact, index) {
+        return _c(
+          "li",
+          {
+            key: contact.id,
+            class: { selected: index == _vm.selected },
+            on: {
+              click: function($event) {
+                return _vm.selectContact(index, contact)
+              }
+            }
+          },
+          [
+            _c("div", { staticClass: "avatar" }, [
+              _c("img", { attrs: { src: contact.image } })
             ]),
             _vm._v(" "),
-            _c("p", { staticClass: "email" }, [_vm._v(_vm._s(contact.email))])
-          ])
-        ])
+            _c("div", { staticClass: "contact" }, [
+              _c("p", { staticClass: "name" }, [
+                _vm._v(" " + _vm._s(contact.name))
+              ]),
+              _vm._v(" "),
+              _c("p", { staticClass: "email" }, [_vm._v(_vm._s(contact.email))])
+            ])
+          ]
+        )
       }),
       0
     )
@@ -36889,7 +36966,37 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", { staticClass: "composer" }, [
+    _c("textarea", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.message,
+          expression: "message"
+        }
+      ],
+      attrs: { placeholder: "Message..." },
+      domProps: { value: _vm.message },
+      on: {
+        keydown: function($event) {
+          if (
+            "keyCode" in $event &&
+            _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+          ) {
+            return null
+          }
+          return _vm.send($event)
+        },
+        input: function($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.message = $event.target.value
+        }
+      }
+    })
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -36913,7 +37020,34 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", { staticClass: "feed" }, [
+    _vm.contact
+      ? _c(
+          "ul",
+          _vm._l(_vm.messages, function(message) {
+            return _c(
+              "li",
+              {
+                key: message.id,
+                class:
+                  "message" +
+                  (message.to == _vm.contact.id ? "sent" : "received")
+              },
+              [
+                _c("div", { staticClass: "text" }, [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(message.text) +
+                      "\n            "
+                  )
+                ])
+              ]
+            )
+          }),
+          0
+        )
+      : _vm._e()
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
