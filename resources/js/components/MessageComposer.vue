@@ -12,8 +12,9 @@ export default {
         }
     },
     methods: {
-        send() {
-            if(this.message = '') {
+        send(e) {
+            e.preventDefault()
+            if(!this.message) {
                 return;
             }
             this.$emit('send', this.message);
