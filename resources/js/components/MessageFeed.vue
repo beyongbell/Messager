@@ -1,7 +1,7 @@
 <template>
-    <div class="feed">
+    <div class="feed" ref="feed">
         <ul v-if="contact">
-            <li v-for="message in messages" :class="`message${message.to == contact.id ? 'sent' : 'received'}`" :key="message.id">
+            <li v-for="message in messages" :class="`message${message.to == contact.id ? ' sent' : ' received'}`" :key="message.id">
                 <div class="text">
                     {{ message.text }}
                 </div>
@@ -12,15 +12,15 @@
 
 <script>
 export default {
-    props: {
-       contact: {
-            type: Object
+      props: {
+            contact: {
+                type: Object
+            },
+            messages: {
+                type: Array,
+                required: true
+            }
         },
-        messages: {
-            type: Array,
-            required: true
-        }
-    }
 }
 </script>
 

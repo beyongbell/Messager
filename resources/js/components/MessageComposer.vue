@@ -23,6 +23,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+    .composer textarea {
+        width:  96%;
+        margin: 10px;
+        resize: none;
+        border-radius: 3px;
+        border: 1px solid lightgray;
+        padding: 6px;
+    }
 </style>

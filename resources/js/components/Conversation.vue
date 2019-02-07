@@ -1,19 +1,19 @@
 <template>
-    <div class="conversation">
-        <h1>{{ contact ? contact.name : "Select a Contact"}}</h1>
-        <MessageFeed :contact="contact" :messages="messages"/>
+     <div class="conversation">
+        <h1>{{ contact ? contact.name : 'Select a Contact' }}</h1>
+        <MessagesFeed :contact="contact" :messages="messages"/>
         <MessageComposer @send="sendMessage"/>
     </div>
 </template>
 
 <script>
-import MessageFeed from './MessageFeed';
+import MessagesFeed from './MessageFeed';
 import MessageComposer from './MessageComposer';
 
 export default {
-    components : {MessageFeed, MessageComposer},
+    components: {MessagesFeed, MessageComposer},
     props: {
-          contact: {
+            contact: {
                 type: Object,
                 default: null
             },
@@ -21,7 +21,7 @@ export default {
                 type: Array,
                 default: []
             }
-    },
+        },
     methods: {
         sendMessage(text) {
             console.log(text);
@@ -30,6 +30,17 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.conversation {
+    flex: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    h1 {
+        font-size:20px;
+        padding: 10px;
+        margin: 0;
+        border-bottom:1px dashed lightgray;
+    }
+}
 </style>
