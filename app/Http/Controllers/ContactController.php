@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Message;
+use App\Events\NewMessage;
 
 class ContactController extends Controller
 {
@@ -27,6 +28,8 @@ class ContactController extends Controller
             'to'   => $request->contact_id,
             'text' => $request->text
         ]);
+
+        broadcast(new NewMessage($message));
 
         return response()->json($message);
     }
