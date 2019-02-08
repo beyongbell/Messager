@@ -1796,6 +1796,8 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     Echo.private("messages.".concat(this.user.id)).listen('NewMessage', function (e) {
+      console.log(e);
+
       _this.hanleIncoming(e.message);
     });
     axios.get('/contacts').then(function (response) {
@@ -1817,6 +1819,7 @@ __webpack_require__.r(__webpack_exports__);
     hanleIncoming: function hanleIncoming(message) {
       if (this.selectedContact && message.from == this.selectedContact.id) {
         this.saveNewMessage(message);
+        console.log(message);
       }
 
       alert(message.text);
@@ -2010,7 +2013,7 @@ __webpack_require__.r(__webpack_exports__);
     contact: function contact(_contact) {
       this.scrollToBottom();
     },
-    message: function message() {
+    messages: function messages(_messages) {
       this.scrollToBottom();
     }
   }

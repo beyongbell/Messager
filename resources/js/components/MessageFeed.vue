@@ -21,9 +21,9 @@ export default {
             required: true
         }
     },
-    methods : {
+    methods: {
         scrollToBottom() {
-            setTimeout(()=> {
+            setTimeout(() => {
                 this.$refs.feed.scrollTop = this.$refs.feed.scrollHeight - this.$refs.feed.clientHeight;
             }, 50);
         }
@@ -32,7 +32,7 @@ export default {
         contact(contact) {
             this.scrollToBottom();
         },
-        message() {
+        messages(messages) {
             this.scrollToBottom();
         }
     }
