@@ -25,10 +25,9 @@
             }
         },
         mounted() {
-            Echo.private(`messages.${this.user.id}`)
+             Echo.private(`messages.${this.user.id}`)
             .listen('NewMessage', (e) => {
-                console.log(e)
-                this.hanleIncoming(e.message);
+                    this.hanleIncoming(e.message);
             });
 
             axios.get('/contacts')
